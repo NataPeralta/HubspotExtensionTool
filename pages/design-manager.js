@@ -5,16 +5,18 @@ window.designManager = (function() {
     };
 
     function setupHublAutocomplete(editor) {
+        if (!window.CodeMirror?.showHint) return;
+
         const hublDefinitions = {
             tags: [
-                { text: "hubldoc", displayText: "hubldoc - HubL Documentation Tag", description: "Adds HubL documentation" },
-                { text: "include", displayText: "include - Include Template", description: "Include another template" },
-                { text: "extends", displayText: "extends - Extend Template", description: "Extend a parent template" },
-                { text: "block", displayText: "block - Template Block", description: "Define a template block" },
-                { text: "widget_block", displayText: "widget_block - Widget Block", description: "Define a widget block" },
-                { text: "require_js", displayText: "require_js - Require JavaScript", description: "Include JavaScript dependencies" },
-                { text: "require_css", displayText: "require_css - Require CSS", description: "Include CSS dependencies" },
-                { text: "module", displayText: "module - HubL Module", description: "Import a HubL module" }
+                { text: "hubldoc", displayText: "hubldoc - HubL Documentation Tag" },
+                { text: "include", displayText: "include - Include Template" },
+                { text: "extends", displayText: "extends - Extend Template" },
+                { text: "block", displayText: "block - Template Block" },
+                { text: "widget_block", displayText: "widget_block - Widget Block" },
+                { text: "require_js", displayText: "require_js - Require JavaScript" },
+                { text: "require_css", displayText: "require_css - Require CSS" },
+                { text: "module", displayText: "module - HubL Module" }
             ],
             variables: [
                 { text: "content", displayText: "content - Current Content Object" },
@@ -57,32 +59,26 @@ window.designManager = (function() {
             };
         }
 
-        editor.on("keyup", function(cm, event) {
-            const triggers = ["{", "%", "|", ".", " "];
-            const shouldTrigger =
-                triggers.includes(event.key) ||
-                (event.ctrlKey && event.key === "Space");
+        const triggers = ["{", "%", "|", ".", " "];
 
-            if (shouldTrigger) {
-                const cur = cm.getCursor();
-                const token = cm.getTokenAt(cur);
-
+        editor.on("keyup", (cm, event) => {
+            if (triggers.includes(event.key) || (event.ctrlKey && event.key === "Space")) {
                 try {
-                    CodeMirror.showHint(cm, function() {
-                        return getHublCompletions(cm, token);
-                    }, {
+                    CodeMirror.showHint(cm, () => getHublCompletions(cm, cm.getTokenAt(cm.getCursor())), {
                         completeSingle: false,
                         closeOnUnfocus: true,
                         alignWithWord: true
                     });
-                } catch (error) {}
+                } catch (error) {
+                    // Silently handle errors to avoid console pollution
+                }
             }
         });
 
         editor.setOption("extraKeys", {
-            "Ctrl-Space": function(cm) {
+            "Ctrl-Space": (cm) => {
                 try {
-                    CodeMirror.showHint(cm, function(cm) {
+                    CodeMirror.showHint(cm, () => {
                         const token = cm.getTokenAt(cm.getCursor());
                         return getHublCompletions(cm, token);
                     }, {
@@ -90,7 +86,9 @@ window.designManager = (function() {
                         closeOnUnfocus: true,
                         alignWithWord: true
                     });
-                } catch (error) {}
+                } catch (error) {
+                    // Silently handle errors to avoid console pollution
+                }
             }
         });
     }
@@ -100,15 +98,15 @@ window.designManager = (function() {
         if (!editorWrapper) return;
 
         const editorElement = editorWrapper.querySelector('.CodeMirror.cm-s-hubspot-canvas-dark');
-        if (!editorElement) return;
+        if (!editorElement?.CodeMirror) return;
 
-        if (editorElement.CodeMirror && !state.editor) {
+        if (!state.editor) {
             state.editor = editorElement.CodeMirror;
             setupHublAutocomplete(state.editor);
         }
     }
 
-    async function init() {
+    function init() {
         if (state.isInitialized) return;
 
         const editorObserver = new MutationObserver(() => {

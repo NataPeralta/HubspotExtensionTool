@@ -1,0 +1,126 @@
+Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.Understand this warningAI
+5[Report Only] Refused to load the script '<URL>' because it violates the following Content Security Policy directive: "script-src 'self' <URL> *.hsappstatic.net *.hs-analytics.net *.hs-banner.com *.hsforms.net *.hsleadflows.net *.hs-scripts.com *.hubspotfeedback.com *.usemessages.com js.hubspot.com *.hsadspixel.net *.hscollectedforms.net js-agent.newrelic.com bam.nr-data.net bam-cell.nr-data.net *.google-analytics.com <URL> data: 'unsafe-inline' 'unsafe-eval' blob: play.vidyard.com app.vidyard.com fast.wistia.com fast.wistia.net". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+Understand this errorAI
+configureFileManager.tsx:17 [FileManager] configureFileManager should only be called once
+re @ configureFileManager.tsx:17
+(anonymous) @ ImageInput.tsx:17
+a @ project.js:2
+(anonymous) @ 2862.js:1
+a @ project.js:2
+(anonymous) @ 2862.js:1
+a @ project.js:2
+1922 @ custom-widget-editor.js:1
+a @ project.js:2
+1921 @ custom-widget-editor.js:1
+a @ project.js:2
+Promise.then
+(anonymous) @ AsyncRouteContainers.js:8
+i @ Loadable.tsx:62
+I @ Loadable.tsx:213
+mu @ react-dom.production.min.js:184
+Lu @ react-dom.production.min.js:197
+Ds @ react-dom.production.min.js:291
+Al @ react-dom.production.min.js:279
+Tl @ react-dom.production.min.js:279
+Il @ react-dom.production.min.js:279
+kl @ react-dom.production.min.js:272
+ei @ react-dom.production.min.js:127
+El @ react-dom.production.min.js:273
+gc @ react-dom.production.min.js:311
+bc @ react-dom.production.min.js:312
+t.render @ react-dom.production.min.js:321
+A @ root.tsx:91
+startRouter @ Application.js:135
+(anonymous) @ Application.js:80
+Promise.then
+start @ Application.js:66
+(anonymous) @ start.ts:3
+(anonymous) @ start.ts:3
+(anonymous) @ start.ts:3Understand this warningAI
+raven.js:1327 
+        
+        
+       GET https://app.hubspot.com/api/designmanager/v1/modules/163391066122/buffer/validate-with-warnings?portalId=22089908&clienttimeout=14000&hs_static_app=DesignManagerIde&hs_static_app_version=2.66969 400 (Bad Request)
+(anonymous) @ raven.js:1327
+(anonymous) @ promiseClient.js:125
+h @ promiseClient.js:58
+Promise.then
+(anonymous) @ promiseClient.js:140
+b @ adapterUtils.js:120
+n @ promiseClient.js:138
+(anonymous) @ promiseClient.js:142
+(anonymous) @ promiseClient.js:145
+d @ CustomWidgetBuffers.ts:47
+(anonymous) @ CustomWidgetBuffers.ts:599
+(anonymous) @ index.js:18
+(anonymous) @ NotificationMiddleware.js:14
+(anonymous) @ middleware.ts:28
+P.n.<computed> @ index.js:271
+validateOnInitialLoad @ CustomWidgetEditor.js:153
+componentDidMount @ CustomWidgetEditor.js:91
+As @ react-dom.production.min.js:260
+js @ react-dom.production.min.js:259
+Ts @ react-dom.production.min.js:258
+Dl @ react-dom.production.min.js:282
+Nl @ react-dom.production.min.js:280
+kl @ react-dom.production.min.js:272
+ei @ react-dom.production.min.js:127
+yl @ react-dom.production.min.js:265
+enqueueSetState @ react-dom.production.min.js:182
+b.setState @ react.production.min.js:12
+(anonymous) @ Loadable.tsx:282
+o @ raven.js:367
+setTimeout
+window.setTimeout @ configure.js:144
+(anonymous) @ raven.js:1083
+(anonymous) @ Loadable.tsx:280
+ta @ react-dom.production.min.js:156
+As @ react-dom.production.min.js:260
+js @ react-dom.production.min.js:259
+Ts @ react-dom.production.min.js:258
+Dl @ react-dom.production.min.js:282
+Nl @ react-dom.production.min.js:280
+kl @ react-dom.production.min.js:272
+ei @ react-dom.production.min.js:127
+yl @ react-dom.production.min.js:265
+enqueueSetState @ react-dom.production.min.js:182
+b.setState @ react.production.min.js:12
+(anonymous) @ Loadable.tsx:292
+o @ raven.js:367
+setTimeout
+window.setTimeout @ configure.js:144
+(anonymous) @ raven.js:1083
+_startTimers @ Loadable.tsx:291
+_loadModule @ Loadable.tsx:256
+componentDidMount @ Loadable.tsx:231
+As @ react-dom.production.min.js:260
+js @ react-dom.production.min.js:259
+Ts @ react-dom.production.min.js:258
+Dl @ react-dom.production.min.js:282
+Nl @ react-dom.production.min.js:280
+kl @ react-dom.production.min.js:272
+ei @ react-dom.production.min.js:127
+El @ react-dom.production.min.js:273
+gc @ react-dom.production.min.js:311
+bc @ react-dom.production.min.js:312
+t.render @ react-dom.production.min.js:321
+A @ root.tsx:91
+startRouter @ Application.js:135
+(anonymous) @ Application.js:80
+Promise.then
+start @ Application.js:66
+(anonymous) @ start.ts:3
+(anonymous) @ start.ts:3
+(anonymous) @ start.ts:3Understand this errorAI
+a73a3808-7a80-4e90-9765-815e1ac3f114:39 TypeError: ne.create is not a function
+    at F (textModel.ts:71:17)
+    at new Ot (textModel.ts:280:38)
+    at Ft._createModelData (modelService.ts:370:28)
+    at Ft.createModel (modelService.ts:427:21)
+    at B (standaloneCodeEditor.ts:580:22)
+    at P (standaloneCodeEditor.ts:573:9)
+    at new D (standaloneCodeEditor.ts:442:12)
+    at g._createInstance (instantiationService.ts:110:13)
+    at g.createInstance (instantiationService.ts:76:18)
+    at Object._ [as create] (standaloneEditor.ts:40:30)
+    at a73a3808-7a80-4e90-9765-815e1ac3f114:33:20

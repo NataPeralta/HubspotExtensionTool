@@ -6,45 +6,47 @@ function getCurrentPage() {
     return null;
 }
 
-async function checkCodeMirrorAvailability() {
-    try {
-        const editorWrapper = document.querySelector('.code-pane-editor.ide-codemirror-wrapper');
-        const editorElement = editorWrapper?.querySelector('.CodeMirror.cm-s-hubspot-canvas-dark');
+function waitForElement(selector, callback, maxAttempts = 10) {
+    let attempts = 0;
 
-        const response = await chrome.runtime.sendMessage({ type: 'checkCodeMirror' });
+    const checkElement = () => {
+        attempts++;
+        const element = document.querySelector(selector);
 
-        return response.hasCodeMirror && 
-               response.hasShowHint && 
-               editorElement?.CodeMirror;
-    } catch (error) {
-        return false;
-    }
+        if (element) {
+            callback(element);
+        } else if (attempts < maxAttempts) {
+            setTimeout(checkElement, 1000);
+        }
+    };
+
+    checkElement();
 }
 
-async function initializePage() {
+function initializePage() {
     const currentPage = getCurrentPage();
     if (!currentPage) return;
 
-    const isCodeMirrorAvailable = await checkCodeMirrorAvailability();
-    if (!isCodeMirrorAvailable) {
-        setTimeout(initializePage, 1000);
-        return;
-    }
-
-    if (currentPage === 'design-manager') {
-        window.designManager.init();
-    }
+    // Esperar a que el editor esté completamente cargado
+    waitForElement('.code-pane-editor', (editorWrapper) => {
+        // Solo inicializar si estamos en la página correcta y el editor está presente
+        if (currentPage === 'design-manager') {
+            try {
+                window.designManager.init();
+            } catch (error) {
+                // Silent fail if the module is not yet loaded
+            }
+        }
+    });
 }
 
+// Observar cambios en el DOM para reinicializar cuando sea necesario
 const observer = new MutationObserver((mutations) => {
     const hasRelevantChanges = mutations.some(mutation => {
-        const addedNodes = Array.from(mutation.addedNodes);
-        return addedNodes.some(node => {
-            if (node.classList) {
-                return node.classList.contains('CodeMirror') || 
-                       node.classList.contains('code-pane-editor');
-            }
-            return false;
+        return Array.from(mutation.addedNodes).some(node => {
+            return node.classList && 
+                   (node.classList.contains('CodeMirror') || 
+                    node.classList.contains('code-pane-editor'));
         });
     });
 
