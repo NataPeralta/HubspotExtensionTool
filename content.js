@@ -1,26 +1,19 @@
-function getCurrentPage() {
-    console.log('[Content Script] Checking current page...');
-    const isDesignManager = window.location.href.includes('design-manager');
-    console.log('[Content Script] Current page is design-manager:', isDesignManager);
-    return isDesignManager ? 'design-manager' : null;
-}
-
 function waitForElement(selector, callback, maxAttempts = 20) {
     let attempts = 0;
 
     const checkElement = () => {
         attempts++;
-        console.log(`[Content Script] Checking for element ${selector} (attempt ${attempts}/${maxAttempts})`);
+        console.log(`[Content Script] Buscando elemento ${selector} (intento ${attempts}/${maxAttempts})`);
         const element = document.querySelector(selector);
 
         if (element) {
-            console.log(`[Content Script] Element ${selector} found, executing callback`);
+            console.log(`[Content Script] Elemento ${selector} encontrado`);
             callback(element);
         } else if (attempts < maxAttempts) {
-            console.log(`[Content Script] Element ${selector} not found, retrying...`);
+            console.log(`[Content Script] Elemento ${selector} no encontrado, reintentando...`);
             setTimeout(checkElement, 500);
         } else {
-            console.log(`[Content Script] Max attempts reached for element ${selector}`);
+            console.log(`[Content Script] Máximo de intentos alcanzado para ${selector}`);
         }
     };
 
@@ -28,34 +21,20 @@ function waitForElement(selector, callback, maxAttempts = 20) {
 }
 
 function initializePage() {
-    console.log('[Content Script] Initializing page...');
-    const currentPage = getCurrentPage();
-    if (!currentPage) {
-        console.log('[Content Script] Not a supported page, exiting initialization');
-        return;
-    }
-
+    console.log('[Content Script] Iniciando inicialización de la página');
     waitForElement('.code-pane-editor', () => {
-        if (currentPage === 'design-manager') {
-            try {
-                console.log('[Content Script] Attempting to initialize design manager...');
-                if (typeof window.designManager !== 'undefined') {
-                    console.log('[Content Script] Design manager found, initializing...');
-                    window.designManager.init();
-                } else {
-                    console.log('[Content Script] Design manager not found, retrying...');
-                    setTimeout(initializePage, 500);
-                }
-            } catch (error) {
-                console.error('[Content Script] Error initializing design manager:', error);
-                setTimeout(initializePage, 500);
-            }
+        if (typeof window.designManager !== 'undefined') {
+            console.log('[Content Script] Design Manager encontrado, iniciando...');
+            window.designManager.init();
+        } else {
+            console.log('[Content Script] Design Manager no encontrado, reintentando...');
+            setTimeout(initializePage, 500);
         }
     });
 }
 
 const observer = new MutationObserver((mutations) => {
-    console.log('[Content Script] DOM mutations detected, checking for relevant changes...');
+    console.log('[Content Script] Cambios en el DOM detectados, verificando cambios relevantes...');
     const hasRelevantChanges = mutations.some(mutation => {
         return Array.from(mutation.addedNodes).some(node => {
             return node.classList && 
@@ -65,21 +44,21 @@ const observer = new MutationObserver((mutations) => {
     });
 
     if (hasRelevantChanges) {
-        console.log('[Content Script] Relevant changes found, reinitializing...');
+        console.log('[Content Script] Cambios relevantes encontrados, reinicializando...');
         initializePage();
     }
 });
 
-console.log('[Content Script] Setting up mutation observer...');
+console.log('[Content Script] Configurando observador de mutaciones...');
 observer.observe(document.body, {
     childList: true,
     subtree: true
 });
 
 if (document.readyState === 'loading') {
-    console.log('[Content Script] Document still loading, waiting for DOMContentLoaded...');
+    console.log('[Content Script] Documento aún cargando, esperando DOMContentLoaded...');
     document.addEventListener('DOMContentLoaded', initializePage);
 } else {
-    console.log('[Content Script] Document already loaded, initializing immediately...');
+    console.log('[Content Script] Documento ya cargado, inicializando inmediatamente...');
     initializePage();
 }
