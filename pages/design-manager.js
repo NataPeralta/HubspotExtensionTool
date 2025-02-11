@@ -5,7 +5,11 @@ window.designManager = (function() {
     };
 
     function setupHublAutocomplete(editor) {
-        if (!window.CodeMirror?.showHint) return;
+        console.log('[Design Manager] Setting up HubL autocomplete...');
+        if (!window.CodeMirror?.showHint) {
+            console.log('[Design Manager] CodeMirror showHint not available, skipping autocomplete setup');
+            return;
+        }
 
         const hublDefinitions = {
             tags: [
@@ -31,6 +35,7 @@ window.designManager = (function() {
         };
 
         function getHublCompletions(cm, token) {
+            console.log('[Design Manager] Getting HubL completions...');
             const cur = cm.getCursor();
             const line = cm.getLine(cur.line);
             const start = token.start;
@@ -39,6 +44,7 @@ window.designManager = (function() {
 
             let suggestions = [];
             const context = line.slice(0, start);
+            console.log('[Design Manager] Context:', { line, currentWord, context });
 
             if (context.includes("{%")) {
                 suggestions = hublDefinitions.tags;
@@ -52,6 +58,7 @@ window.designManager = (function() {
                 item.text.toLowerCase().startsWith(currentWord)
             );
 
+            console.log('[Design Manager] Found suggestions:', suggestions.length);
             return {
                 list: suggestions,
                 from: CodeMirror.Pos(cur.line, start),
@@ -63,18 +70,22 @@ window.designManager = (function() {
 
         editor.on("keyup", (cm, event) => {
             if (triggers.includes(event.key) || (event.ctrlKey && event.key === "Space")) {
+                console.log('[Design Manager] Autocomplete trigger detected:', event.key);
                 try {
                     CodeMirror.showHint(cm, () => getHublCompletions(cm, cm.getTokenAt(cm.getCursor())), {
                         completeSingle: false,
                         closeOnUnfocus: true,
                         alignWithWord: true
                     });
-                } catch (error) {}
+                } catch (error) {
+                    console.error('[Design Manager] Error showing hints:', error);
+                }
             }
         });
 
         editor.setOption("extraKeys", {
             "Ctrl-Space": (cm) => {
+                console.log('[Design Manager] Manual autocomplete triggered (Ctrl+Space)');
                 try {
                     CodeMirror.showHint(cm, () => {
                         const token = cm.getTokenAt(cm.getCursor());
@@ -84,30 +95,47 @@ window.designManager = (function() {
                         closeOnUnfocus: true,
                         alignWithWord: true
                     });
-                } catch (error) {}
+                } catch (error) {
+                    console.error('[Design Manager] Error showing hints on manual trigger:', error);
+                }
             }
         });
+
+        console.log('[Design Manager] HubL autocomplete setup completed');
     }
 
     function findAndSetupEditor() {
+        console.log('[Design Manager] Looking for editor...');
         const editorWrapper = document.querySelector('.code-pane-editor.ide-codemirror-wrapper');
-        if (!editorWrapper) return;
+        if (!editorWrapper) {
+            console.log('[Design Manager] Editor wrapper not found');
+            return;
+        }
 
         const editorElement = editorWrapper.querySelector('.CodeMirror.cm-s-hubspot-canvas-dark');
-        if (!editorElement?.CodeMirror) return;
+        if (!editorElement?.CodeMirror) {
+            console.log('[Design Manager] CodeMirror instance not found');
+            return;
+        }
 
         if (!state.editor) {
+            console.log('[Design Manager] Setting up new editor instance');
             state.editor = editorElement.CodeMirror;
             setupHublAutocomplete(state.editor);
         }
     }
 
     function init() {
-        if (state.isInitialized) return;
+        console.log('[Design Manager] Initializing...');
+        if (state.isInitialized) {
+            console.log('[Design Manager] Already initialized');
+            return;
+        }
 
         findAndSetupEditor();
 
         const editorObserver = new MutationObserver(() => {
+            console.log('[Design Manager] DOM changes detected, checking editor setup');
             findAndSetupEditor();
         });
 
@@ -117,6 +145,7 @@ window.designManager = (function() {
         });
 
         state.isInitialized = true;
+        console.log('[Design Manager] Initialization complete');
     }
 
     return { init };
