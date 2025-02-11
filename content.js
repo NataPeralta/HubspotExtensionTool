@@ -1,27 +1,56 @@
-// Function to determine which page we are viewing
 function getCurrentPage() {
     const url = window.location.href;
     if (url.includes('design-manager')) {
         return 'design-manager';
-    } else if (url.includes('design-previewer')) {
-        return 'design-previewer';
     }
     return null;
 }
 
-// Initialize the corresponding functionality according to the page
-function initializePage() {
-    const currentPage = getCurrentPage();
-    if (currentPage === 'design-manager') {
-        window.designManager.init();
-    } else if (currentPage === 'design-previewer') {
-        window.designPreviewer.init();
+async function checkCodeMirrorAvailability() {
+    try {
+        const editorWrapper = document.querySelector('.code-pane-editor.ide-codemirror-wrapper');
+        const editorElement = editorWrapper?.querySelector('.CodeMirror.cm-s-hubspot-canvas-dark');
+
+        const response = await chrome.runtime.sendMessage({ type: 'checkCodeMirror' });
+
+        return response.hasCodeMirror && 
+               response.hasShowHint && 
+               editorElement?.CodeMirror;
+    } catch (error) {
+        return false;
     }
 }
 
-// Observador de mutaciones para manejar cambios dinámicos en el DOM
-const observer = new MutationObserver(() => {
-    initializePage();
+async function initializePage() {
+    const currentPage = getCurrentPage();
+    if (!currentPage) return;
+
+    const isCodeMirrorAvailable = await checkCodeMirrorAvailability();
+    if (!isCodeMirrorAvailable) {
+        setTimeout(initializePage, 1000);
+        return;
+    }
+
+    if (currentPage === 'design-manager') {
+        window.designManager.init();
+    }
+}
+
+const observer = new MutationObserver((mutations) => {
+    const hasRelevantChanges = mutations.some(mutation => {
+        const addedNodes = Array.from(mutation.addedNodes);
+        return addedNodes.some(node => {
+            if (node.classList) {
+                return node.classList.contains('CodeMirror') || 
+                       node.classList.contains('code-pane-editor');
+            }
+            return false;
+        });
+    });
+
+    if (hasRelevantChanges) {
+        initializePage();
+    }
 });
 
 observer.observe(document.body, {
@@ -29,5 +58,4 @@ observer.observe(document.body, {
     subtree: true
 });
 
-// Inicialización inicial
 initializePage();
