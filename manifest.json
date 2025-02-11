@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "HubSpot Layout Manager",
   "version": "1.0",
-  "description": "Toggle panel width in HubSpot design manager",
+  "description": "Toggle panel width in HubSpot design manager and previewer",
   "permissions": [
     "storage",
     "activeTab"
@@ -17,9 +17,13 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://app.hubspot.com/design-manager/*"],
+      "matches": [
+        "https://app.hubspot.com/design-manager/*",
+        "https://app.hubspot.com/design-previewer/*"
+      ],
       "css": ["styles.css"],
-      "js": ["content.js"]
+      "js": ["content.js"],
+      "type": "module"
     }
   ],
   "background": {
