@@ -672,17 +672,18 @@ var MonacoEditor = function MonacoEditor() {
       editorElements.forEach(function (editor) {
         var content = editor.value || '';
         if (editor.closest('[data-test-id="code-pane-hubl-html"]')) {
-          console.log('Found HTML content');
+          console.log('Found HTML content:', content.substring(0, 50) + '...');
           setHtmlValue(content);
         } else if (editor.closest('[data-test-id="code-pane-hubl-css"]')) {
-          console.log('Found CSS content');
+          console.log('Found CSS content:', content.substring(0, 50) + '...');
           setCssValue(content);
         } else if (editor.closest('[data-test-id="code-pane-hubl-javascript"]')) {
-          console.log('Found JS content');
+          console.log('Found JS content:', content.substring(0, 50) + '...');
           setJsValue(content);
         }
       });
       setIsLoaded(true);
+      console.log('Initial content extraction complete');
     } catch (error) {
       console.error('Error extracting content:', error);
     }
@@ -697,6 +698,7 @@ var MonacoEditor = function MonacoEditor() {
         injectEditor(editorContainer);
         return true;
       }
+      console.log('Editor container not found or Monaco already injected');
       return false;
     };
     var observer = new MutationObserver(function (mutations) {
@@ -706,8 +708,10 @@ var MonacoEditor = function MonacoEditor() {
         for (_iterator.s(); !(_step = _iterator.n()).done;) {
           var mutation = _step.value;
           if (mutation.addedNodes.length && !isLoaded) {
+            console.log('Mutation observer detected changes, checking for editor container');
             if (findAndInjectEditor()) {
               observer.disconnect();
+              console.log('Editor injection complete, disconnecting observer');
               break;
             }
           }
@@ -722,11 +726,11 @@ var MonacoEditor = function MonacoEditor() {
       childList: true,
       subtree: true
     });
-
-    // Initial check
+    console.log('Starting initial check for editor container');
     findAndInjectEditor();
     return function () {
-      return observer.disconnect();
+      console.log('Cleaning up observer');
+      observer.disconnect();
     };
   }, [isLoaded]);
   var injectEditor = function injectEditor(container) {
@@ -737,29 +741,42 @@ var MonacoEditor = function MonacoEditor() {
       editorDiv.id = 'monaco-editor-root';
       editorDiv.style.cssText = 'display: flex; flex-direction: column; height: 100%; padding: 10px; background: #1e1e1e;';
       container.appendChild(editorDiv);
+      console.log('Monaco editor container injected successfully');
     } catch (error) {
       console.error('Error injecting editor:', error);
     }
   };
   var handleEditorChange = function handleEditorChange(value, type) {
     console.log("Editor ".concat(type, " changed"));
-    switch (type) {
-      case 'html':
-        setHtmlValue(value);
-        // Actualizar el textarea original de HubSpot
-        var htmlTextarea = document.querySelector('[data-test-id="code-pane-hubl-html"] textarea');
-        if (htmlTextarea) htmlTextarea.value = value;
-        break;
-      case 'css':
-        setCssValue(value);
-        var cssTextarea = document.querySelector('[data-test-id="code-pane-hubl-css"] textarea');
-        if (cssTextarea) cssTextarea.value = value;
-        break;
-      case 'js':
-        setJsValue(value);
-        var jsTextarea = document.querySelector('[data-test-id="code-pane-hubl-javascript"] textarea');
-        if (jsTextarea) jsTextarea.value = value;
-        break;
+    try {
+      switch (type) {
+        case 'html':
+          setHtmlValue(value);
+          var htmlTextarea = document.querySelector('[data-test-id="code-pane-hubl-html"] textarea');
+          if (htmlTextarea) {
+            htmlTextarea.value = value;
+            console.log('HTML content synced back to HubSpot editor');
+          }
+          break;
+        case 'css':
+          setCssValue(value);
+          var cssTextarea = document.querySelector('[data-test-id="code-pane-hubl-css"] textarea');
+          if (cssTextarea) {
+            cssTextarea.value = value;
+            console.log('CSS content synced back to HubSpot editor');
+          }
+          break;
+        case 'js':
+          setJsValue(value);
+          var jsTextarea = document.querySelector('[data-test-id="code-pane-hubl-javascript"] textarea');
+          if (jsTextarea) {
+            jsTextarea.value = value;
+            console.log('JS content synced back to HubSpot editor');
+          }
+          break;
+      }
+    } catch (error) {
+      console.error("Error syncing ".concat(type, " content:"), error);
     }
   };
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
