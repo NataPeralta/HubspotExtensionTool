@@ -51,6 +51,14 @@ window.designManager = (function() {
     }
 
     function setupHublAutocomplete(editor) {
+        console.log('Iniciando configuración de autocompletado HubL...');
+
+        // Verificar que CodeMirror.showHint existe
+        if (!window.CodeMirror || !window.CodeMirror.showHint) {
+            console.error('CodeMirror.showHint no está disponible');
+            return;
+        }
+
         const hublDefinitions = {
             tags: [
                 { text: "hubldoc", displayText: "hubldoc - HubL Documentation Tag", description: "Adds HubL documentation" },
@@ -75,21 +83,33 @@ window.designManager = (function() {
         };
 
         function getHublCompletions(cm, token) {
+            console.log('getHublCompletions llamado con token:', token);
+
             const cur = cm.getCursor();
             const line = cm.getLine(cur.line);
             const start = token.start;
             const end = cur.ch;
             const currentWord = token.string.toLowerCase();
 
+            console.log('Contexto actual:', {
+                line,
+                currentWord,
+                start,
+                end
+            });
+
             let suggestions = [];
             const context = line.slice(0, start);
 
             // Detectar el tipo de completado basado en el contexto
             if (context.includes("{%")) {
+                console.log('Contexto de tags detectado');
                 suggestions = hublDefinitions.tags;
             } else if (context.includes("{{")) {
+                console.log('Contexto de variables detectado');
                 suggestions = hublDefinitions.variables;
             } else if (context.includes("|")) {
+                console.log('Contexto de filtros detectado');
                 suggestions = hublDefinitions.filters;
             }
 
@@ -97,6 +117,8 @@ window.designManager = (function() {
             suggestions = suggestions.filter(item => 
                 item.text.toLowerCase().startsWith(currentWord)
             );
+
+            console.log('Sugerencias filtradas:', suggestions);
 
             return {
                 list: suggestions,
@@ -107,34 +129,73 @@ window.designManager = (function() {
 
         // Configurar triggers para autocompletado
         editor.on("keyup", function(cm, event) {
+            console.log('Evento keyup detectado:', event.key);
+
             const triggers = ["{", "%", "|", ".", " "];
             const shouldTrigger = 
                 triggers.includes(event.key) ||
                 (event.ctrlKey && event.key === "Space");
 
+            console.log('¿Debería mostrar autocompletado?', shouldTrigger);
+
             if (shouldTrigger) {
                 const cur = cm.getCursor();
                 const token = cm.getTokenAt(cur);
 
-                CodeMirror.showHint(cm, function() {
-                    return getHublCompletions(cm, token);
-                }, {
-                    completeSingle: false,
-                    closeOnUnfocus: true,
-                    alignWithWord: true
-                });
+                console.log('Mostrando hints para token:', token);
+
+                try {
+                    CodeMirror.showHint(cm, function() {
+                        return getHublCompletions(cm, token);
+                    }, {
+                        completeSingle: false,
+                        closeOnUnfocus: true,
+                        alignWithWord: true
+                    });
+                } catch (error) {
+                    console.error('Error al mostrar hints:', error);
+                }
             }
         });
 
-        console.log('HubL autocompletado configurado');
+        // Agregar trigger también para Ctrl+Space
+        editor.setOption("extraKeys", {
+            "Ctrl-Space": function(cm) {
+                console.log('Ctrl+Space detectado');
+                try {
+                    CodeMirror.showHint(cm, function(cm) {
+                        const token = cm.getTokenAt(cm.getCursor());
+                        return getHublCompletions(cm, token);
+                    }, {
+                        completeSingle: false,
+                        closeOnUnfocus: true,
+                        alignWithWord: true
+                    });
+                } catch (error) {
+                    console.error('Error al mostrar hints con Ctrl+Space:', error);
+                }
+            }
+        });
+
+        console.log('HubL autocompletado configurado exitosamente');
     }
 
     function findAndSetupEditor() {
-        const editorElement = document.querySelector('.CodeMirror');
-        if (editorElement && editorElement.CodeMirror && !state.editor) {
-            console.log('Editor CodeMirror encontrado');
-            state.editor = editorElement.CodeMirror;
-            setupHublAutocomplete(state.editor);
+        console.log('Buscando editor CodeMirror...');
+        const editorElements = document.querySelectorAll('.CodeMirror');
+        console.log('Elementos CodeMirror encontrados:', editorElements.length);
+
+        editorElements.forEach((element, index) => {
+            console.log(`Verificando elemento CodeMirror #${index}:`, element);
+            if (element.CodeMirror && !state.editor) {
+                console.log('Editor CodeMirror válido encontrado');
+                state.editor = element.CodeMirror;
+                setupHublAutocomplete(state.editor);
+            }
+        });
+
+        if (!state.editor) {
+            console.log('No se encontró un editor CodeMirror válido');
         }
     }
 
@@ -170,8 +231,10 @@ window.designManager = (function() {
             }
         }
 
-        // Add editor initialization
-        const editorObserver = new MutationObserver(() => {
+        // Add editor initialization with more logging
+        console.log('Configurando observador del DOM para detectar el editor...');
+        const editorObserver = new MutationObserver((mutations) => {
+            console.log('Cambios en el DOM detectados:', mutations.length);
             findAndSetupEditor();
         });
 
