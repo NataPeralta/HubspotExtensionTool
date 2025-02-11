@@ -1,6 +1,8 @@
 // Estado global para el toggle
 let isPanelCollapsed = false;
 let isInitialized = false;
+let originalWidth = null;
+let originalMinWidth = null;
 
 // Función para encontrar el panel objetivo
 function findTargetPanel() {
@@ -28,7 +30,7 @@ function findButtonContainer() {
     console.log('Buscando contenedor del botón...');
 
     // Buscar el div padre específico
-    let container = document.querySelector('div[class*="UIFlex__StyledFlex"][class*="private-flex"][direction="row"][wrap="nowrap"]');
+    let container = document.querySelector("body > div.page > div > div.tour-container > div > div.UIFlex__StyledFlex-sc-123tvm-0.hrHyrW.private-flex.resizable-panes.application-pane > div.UIBox__Box-ya7skb-0.hCEmYI.private-flex__child.resizable-pane.application-container__main.is--vertical > div > div.editor-container > div > div.private-tool-bar.editor-toolbar > div > div:nth-child(3) > div");
     if (container) {
         console.log('Contenedor encontrado con selector principal');
         return container;
@@ -61,13 +63,20 @@ function togglePanel() {
     console.log('Toggle panel - nuevo estado:', isPanelCollapsed);
 
     if (isPanelCollapsed) {
+        // Guardar dimensiones originales antes de colapsar
+        originalWidth = panel.style.width || window.getComputedStyle(panel).width;
+        originalMinWidth = panel.style.minWidth || window.getComputedStyle(panel).minWidth;
+        console.log('Guardando dimensiones originales:', { originalWidth, originalMinWidth });
+
         panel.style.width = '0px';
         panel.style.minWidth = 'unset';
         panel.classList.add('collapsed');
     } else {
-        panel.style.width = '';
-        panel.style.minWidth = '';
+        // Restaurar dimensiones originales
+        panel.style.width = originalWidth;
+        panel.style.minWidth = originalMinWidth;
         panel.classList.remove('collapsed');
+        console.log('Restaurando dimensiones originales:', { originalWidth, originalMinWidth });
     }
 
     // Guardar el estado en el almacenamiento local
@@ -108,6 +117,10 @@ function init() {
         if (isPanelCollapsed) {
             const panel = findTargetPanel();
             if (panel) {
+                // Guardar dimensiones originales
+                originalWidth = panel.style.width || window.getComputedStyle(panel).width;
+                originalMinWidth = panel.style.minWidth || window.getComputedStyle(panel).minWidth;
+
                 panel.style.width = '0px';
                 panel.style.minWidth = 'unset';
                 panel.classList.add('collapsed');
