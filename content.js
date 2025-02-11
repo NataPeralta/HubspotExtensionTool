@@ -6,7 +6,7 @@ let isInitialized = false;
 function findTargetPanel() {
     console.log('Buscando panel objetivo...');
     // Usando el selector específico proporcionado
-    let panel = document.querySelector('.UIBox__Box-ya7skb-0.private-flex__child.resizable-pane.is--vertical');
+    let panel = document.querySelector('div.UIFlex__StyledFlex-sc-123tvm-0.hrHyrW.private-flex.resizable-panes.application-pane > div.UIBox__Box-ya7skb-0.hCEmYI.private-flex__child.resizable-pane.application-container__main.is--vertical > div > div.editor-container > div > div.UIFlex__StyledFlex-sc-123tvm-0.hrHyrW.private-flex.resizable-panes > div.UIBox__Box-ya7skb-0.hCDAKA.private-flex__child.resizable-pane.is--vertical');
     if (panel) {
         console.log('Panel encontrado con selector principal');
         return panel;
@@ -76,7 +76,7 @@ function togglePanel() {
 
     if (isPanelCollapsed) {
         panel.style.width = '30px';
-        panel.style.minWidth = '30px';
+        panel.style.minWidth = 'unset';
         panel.classList.add('collapsed');
     } else {
         panel.style.width = '';
@@ -123,7 +123,7 @@ function init() {
             const panel = findTargetPanel();
             if (panel) {
                 panel.style.width = '30px';
-                panel.style.minWidth = '30px';
+                panel.style.minWidth = 'unset';
                 panel.classList.add('collapsed');
             }
         }
