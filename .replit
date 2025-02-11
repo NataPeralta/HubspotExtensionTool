@@ -27,10 +27,10 @@ task = "packager.installForAll"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "echo 'Chrome extension ready for development. Use Load unpacked in Chrome to test.'"
+args = "npx webpack --mode development --watch"
 
 [deployment]
-run = ["sh", "-c", "echo 'Chrome extension ready for development. Use Load unpacked in Chrome to test.'"]
+run = ["sh", "-c", "npx webpack --mode development --watch"]
 
 [[ports]]
 localPort = 8000

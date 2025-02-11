@@ -1,10 +1,11 @@
 {
   "manifest_version": 3,
-  "name": "HubSpot Layout Manager",
+  "name": "HubSpot Monaco Editor",
   "version": "1.0",
-  "description": "Editor enhancement for HubSpot design manager",
+  "description": "Reemplaza el editor de HubSpot con Monaco Editor",
   "permissions": [
-    "activeTab"
+    "activeTab",
+    "scripting"
   ],
   "host_permissions": [
     "https://app.hubspot.com/*"
@@ -14,11 +15,12 @@
       "matches": [
         "https://app.hubspot.com/design-manager/*"
       ],
-      "js": [
-        "pages/design-manager.js",
-        "content.js"
-      ],
+      "js": ["dist/bundle.js"],
       "run_at": "document_end"
     }
-  ]
+  ],
+  "web_accessible_resources": [{
+    "resources": ["dist/bundle.js"],
+    "matches": ["https://app.hubspot.com/*"]
+  }]
 }
