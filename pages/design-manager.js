@@ -70,7 +70,7 @@ window.designManager = (function() {
                         alignWithWord: true
                     });
                 } catch (error) {
-                    // Silently handle errors to avoid console pollution
+                    // Silent handle to avoid console pollution
                 }
             }
         });
@@ -87,7 +87,7 @@ window.designManager = (function() {
                         alignWithWord: true
                     });
                 } catch (error) {
-                    // Silently handle errors to avoid console pollution
+                    // Silent handle to avoid console pollution
                 }
             }
         });
@@ -109,6 +109,8 @@ window.designManager = (function() {
     function init() {
         if (state.isInitialized) return;
 
+        findAndSetupEditor();
+
         const editorObserver = new MutationObserver(() => {
             findAndSetupEditor();
         });
@@ -118,7 +120,6 @@ window.designManager = (function() {
             subtree: true
         });
 
-        findAndSetupEditor();
         state.isInitialized = true;
     }
 

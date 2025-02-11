@@ -1,12 +1,8 @@
 function getCurrentPage() {
-    const url = window.location.href;
-    if (url.includes('design-manager')) {
-        return 'design-manager';
-    }
-    return null;
+    return window.location.href.includes('design-manager') ? 'design-manager' : null;
 }
 
-function waitForElement(selector, callback, maxAttempts = 10) {
+function waitForElement(selector, callback, maxAttempts = 20) {
     let attempts = 0;
 
     const checkElement = () => {
@@ -16,7 +12,7 @@ function waitForElement(selector, callback, maxAttempts = 10) {
         if (element) {
             callback(element);
         } else if (attempts < maxAttempts) {
-            setTimeout(checkElement, 1000);
+            setTimeout(checkElement, 500);
         }
     };
 
@@ -28,13 +24,16 @@ function initializePage() {
     if (!currentPage) return;
 
     // Esperar a que el editor esté completamente cargado
-    waitForElement('.code-pane-editor', (editorWrapper) => {
-        // Solo inicializar si estamos en la página correcta y el editor está presente
+    waitForElement('.code-pane-editor', () => {
         if (currentPage === 'design-manager') {
             try {
-                window.designManager.init();
+                if (typeof window.designManager !== 'undefined') {
+                    window.designManager.init();
+                } else {
+                    setTimeout(initializePage, 500);
+                }
             } catch (error) {
-                // Silent fail if the module is not yet loaded
+                setTimeout(initializePage, 500);
             }
         }
     });
@@ -60,4 +59,9 @@ observer.observe(document.body, {
     subtree: true
 });
 
-initializePage();
+// Inicializar cuando el DOM esté listo
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializePage);
+} else {
+    initializePage();
+}
