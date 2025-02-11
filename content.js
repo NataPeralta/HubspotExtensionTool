@@ -27,24 +27,10 @@ function findTargetPanel() {
 function findButtonContainer() {
     console.log('Buscando contenedor del botón...');
 
-    // Primero intentamos con el selector específico de HubSpot
-    let container = document.querySelector('.dm-tool__breadcrumbs.field-edit-breadcrumbs');
+    // Buscar el div padre específico
+    let container = document.querySelector('div[class*="UIFlex__StyledFlex"][class*="private-flex"][direction="row"][wrap="nowrap"]');
     if (container) {
         console.log('Contenedor encontrado con selector principal');
-        return container;
-    }
-
-    // Si no funciona, intentamos con el selector más específico
-    container = document.querySelector('[class*="ToolBreadcrumbs__StyledFlexContainer"]');
-    if (container) {
-        console.log('Contenedor encontrado con selector alternativo 1');
-        return container;
-    }
-
-    // Último intento con el selector más genérico
-    container = document.querySelector('[class*="dm-tool__breadcrumbs"]');
-    if (container) {
-        console.log('Contenedor encontrado con selector alternativo 2');
         return container;
     }
 
@@ -75,7 +61,7 @@ function togglePanel() {
     console.log('Toggle panel - nuevo estado:', isPanelCollapsed);
 
     if (isPanelCollapsed) {
-        panel.style.width = '30px';
+        panel.style.width = '0px';
         panel.style.minWidth = 'unset';
         panel.classList.add('collapsed');
     } else {
@@ -122,7 +108,7 @@ function init() {
         if (isPanelCollapsed) {
             const panel = findTargetPanel();
             if (panel) {
-                panel.style.width = '30px';
+                panel.style.width = '0px';
                 panel.style.minWidth = 'unset';
                 panel.classList.add('collapsed');
             }
