@@ -1,0 +1,20 @@
+/* Estilos para el botón de toggle */
+.hubspot-layout-toggle {
+    cursor: pointer !important;
+    transition: transform 0.3s ease !important;
+}
+
+.hubspot-layout-toggle:hover {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Estilos para el panel cuando está colapsado */
+.private-flex__child.resizable-pane.is--vertical.collapsed {
+    transition: width 0.3s ease !important;
+    overflow: hidden !important;
+}
+
+/* Animación del icono cuando el panel está colapsado */
+.collapsed .hubspot-layout-toggle {
+    transform: rotate(180deg);
+}
