@@ -3,23 +3,39 @@ let isPanelCollapsed = false;
 
 // Función para encontrar el panel objetivo
 function findTargetPanel() {
-    return document.querySelector('.UIBox__Box-ya7skb-0.hCDAKA.private-flex__child.resizable-pane.is--vertical');
+    // Primero intentamos con el selector específico de HubSpot
+    let panel = document.querySelector('.custom-widget-editor-sidebar.main-sidebar');
+
+    // Si no funciona, intentamos con los selectores alternativos
+    if (!panel) {
+        panel = document.querySelector('.resizable-pane.is--vertical');
+    }
+    if (!panel) {
+        panel = document.querySelector('[class*="resizable-pane"][class*="is--vertical"]');
+    }
+
+    return panel;
 }
 
 // Función para encontrar el contenedor del botón
 function findButtonContainer() {
-    return document.querySelector("body > div.page > div > div.tour-container > div > div.UIFlex__StyledFlex-sc-123tvm-0.hrHyrW.private-flex.resizable-panes.application-pane > div.UIBox__Box-ya7skb-0.hCEmYI.private-flex__child.resizable-pane.application-container__main.is--vertical > div > div.editor-container > div > div.UIFlex__StyledFlex-sc-123tvm-0.hrHyrW.private-flex.resizable-panes > div.UIBox__Box-ya7skb-0.hCDAKA.private-flex__child.resizable-pane.is--vertical > div > div > div.UIBox__Box-ya7skb-0.hCDAKA.private-flex__child > div");
+    // Primero intentamos con el selector simplificado
+    let container = document.querySelector(".editor-container .private-flex__child > div");
+
+    // Si no funciona, intentamos con el selector más específico
+    if (!container) {
+        container = document.querySelector('[class*="editor-container"] [class*="private-flex__child"] > div');
+    }
+
+    return container;
 }
 
 // Función para crear el botón de toggle
 function createToggleButton() {
     const button = document.createElement('button');
-    button.className = 'hubspot-layout-toggle uiButton private-button private-button--transparent private-button--default UIIconButton__Button-ivih4-0 kjgObt private-button--icon-only finder-toggle-button p-all-2 private-button--non-responsive private-button--non-link';
-    button.setAttribute('data-button-use', 'transparent');
+    button.className = 'toggle-button';
     button.innerHTML = `
-        <span class="private-icon private-icon__low" data-icon-name="first">
-            <span aria-hidden="true" class="UIIcon__IconContent-sc-1rupovw-0 gaeDOo">⇄</span>
-        </span>
+        <span class="toggle-icon">⇄</span>
     `;
     return button;
 }
@@ -27,10 +43,13 @@ function createToggleButton() {
 // Función para manejar el toggle del panel
 function togglePanel() {
     const panel = findTargetPanel();
-    if (!panel) return;
+    if (!panel) {
+        console.log('Panel no encontrado');
+        return;
+    }
 
     isPanelCollapsed = !isPanelCollapsed;
-    
+
     if (isPanelCollapsed) {
         panel.style.width = '30px';
         panel.style.minWidth = '30px';
@@ -45,14 +64,21 @@ function togglePanel() {
     chrome.storage.local.set({ isPanelCollapsed });
 }
 
+
 // Función principal de inicialización
 function init() {
+    console.log('Inicializando extensión HubSpot Layout Manager');
+
     // Recuperar el estado guardado
     chrome.storage.local.get(['isPanelCollapsed'], (result) => {
         isPanelCollapsed = result.isPanelCollapsed || false;
-        
+        console.log('Estado recuperado:', isPanelCollapsed);
+
         const buttonContainer = findButtonContainer();
-        if (!buttonContainer) return;
+        if (!buttonContainer) {
+            console.log('Contenedor del botón no encontrado');
+            return;
+        }
 
         const toggleButton = createToggleButton();
         buttonContainer.appendChild(toggleButton);
@@ -73,7 +99,7 @@ function init() {
 
 // Observador de mutaciones para manejar cambios dinámicos en el DOM
 const observer = new MutationObserver((mutations) => {
-    if (!document.querySelector('.hubspot-layout-toggle')) {
+    if (!document.querySelector('.toggle-button')) {
         init();
     }
 });

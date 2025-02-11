@@ -1,20 +1,40 @@
 /* Estilos para el botón de toggle */
-.hubspot-layout-toggle {
-    cursor: pointer !important;
-    transition: transform 0.3s ease !important;
+.toggle-button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
 }
 
-.hubspot-layout-toggle:hover {
-    background-color: rgba(0, 0, 0, 0.05) !important;
+.toggle-button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.toggle-icon {
+    display: inline-block;
+    font-size: 16px;
+    transition: transform 0.3s ease;
 }
 
 /* Estilos para el panel cuando está colapsado */
-.private-flex__child.resizable-pane.is--vertical.collapsed {
-    transition: width 0.3s ease !important;
-    overflow: hidden !important;
+.resizable-pane.is--vertical {
+    transition: width 0.3s ease;
 }
 
-/* Animación del icono cuando el panel está colapsado */
-.collapsed .hubspot-layout-toggle {
+.resizable-pane.is--vertical.collapsed {
+    overflow: hidden;
+}
+
+.custom-widget-editor-sidebar.main-sidebar {
+    transition: width 0.3s ease;
+}
+
+.custom-widget-editor-sidebar.main-sidebar.collapsed {
+    overflow: hidden;
+}
+
+.collapsed .toggle-icon {
     transform: rotate(180deg);
 }
