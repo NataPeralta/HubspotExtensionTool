@@ -69,9 +69,7 @@ window.designManager = (function() {
                         closeOnUnfocus: true,
                         alignWithWord: true
                     });
-                } catch (error) {
-                    // Silent handle to avoid console pollution
-                }
+                } catch (error) {}
             }
         });
 
@@ -86,9 +84,7 @@ window.designManager = (function() {
                         closeOnUnfocus: true,
                         alignWithWord: true
                     });
-                } catch (error) {
-                    // Silent handle to avoid console pollution
-                }
+                } catch (error) {}
             }
         });
     }

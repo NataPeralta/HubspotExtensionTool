@@ -23,7 +23,6 @@ function initializePage() {
     const currentPage = getCurrentPage();
     if (!currentPage) return;
 
-    // Esperar a que el editor esté completamente cargado
     waitForElement('.code-pane-editor', () => {
         if (currentPage === 'design-manager') {
             try {
@@ -39,7 +38,6 @@ function initializePage() {
     });
 }
 
-// Observar cambios en el DOM para reinicializar cuando sea necesario
 const observer = new MutationObserver((mutations) => {
     const hasRelevantChanges = mutations.some(mutation => {
         return Array.from(mutation.addedNodes).some(node => {
@@ -59,7 +57,6 @@ observer.observe(document.body, {
     subtree: true
 });
 
-// Inicializar cuando el DOM esté listo
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initializePage);
 } else {
