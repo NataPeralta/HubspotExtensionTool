@@ -3,40 +3,63 @@ let isPanelCollapsed = false;
 
 // Función para encontrar el panel objetivo
 function findTargetPanel() {
+    console.log('Buscando panel objetivo...');
     // Primero intentamos con el selector específico de HubSpot
     let panel = document.querySelector('.custom-widget-editor-sidebar.main-sidebar');
+    if (panel) {
+        console.log('Panel encontrado con selector principal');
+        return panel;
+    }
 
     // Si no funciona, intentamos con los selectores alternativos
-    if (!panel) {
-        panel = document.querySelector('.resizable-pane.is--vertical');
-    }
-    if (!panel) {
-        panel = document.querySelector('[class*="resizable-pane"][class*="is--vertical"]');
+    panel = document.querySelector('.resizable-pane.is--vertical');
+    if (panel) {
+        console.log('Panel encontrado con selector alternativo 1');
+        return panel;
     }
 
-    return panel;
+    panel = document.querySelector('[class*="resizable-pane"][class*="is--vertical"]');
+    if (panel) {
+        console.log('Panel encontrado con selector alternativo 2');
+        return panel;
+    }
+
+    console.log('No se encontró ningún panel');
+    return null;
 }
 
 // Función para encontrar el contenedor del botón
 function findButtonContainer() {
+    console.log('Buscando contenedor del botón...');
+
     // Primero intentamos con el selector específico de HubSpot
     let container = document.querySelector('.dm-tool__breadcrumbs.field-edit-breadcrumbs');
+    if (container) {
+        console.log('Contenedor encontrado con selector principal');
+        return container;
+    }
 
     // Si no funciona, intentamos con el selector más específico
-    if (!container) {
-        container = document.querySelector('[class*="ToolBreadcrumbs__StyledFlexContainer"]');
+    container = document.querySelector('[class*="ToolBreadcrumbs__StyledFlexContainer"]');
+    if (container) {
+        console.log('Contenedor encontrado con selector alternativo 1');
+        return container;
     }
 
     // Último intento con el selector más genérico
-    if (!container) {
-        container = document.querySelector('[class*="dm-tool__breadcrumbs"]');
+    container = document.querySelector('[class*="dm-tool__breadcrumbs"]');
+    if (container) {
+        console.log('Contenedor encontrado con selector alternativo 2');
+        return container;
     }
 
-    return container;
+    console.log('No se encontró ningún contenedor para el botón');
+    return null;
 }
 
 // Función para crear el botón de toggle
 function createToggleButton() {
+    console.log('Creando botón de toggle');
     const button = document.createElement('button');
     button.className = 'toggle-button';
     button.innerHTML = `
@@ -54,6 +77,7 @@ function togglePanel() {
     }
 
     isPanelCollapsed = !isPanelCollapsed;
+    console.log('Toggle panel - nuevo estado:', isPanelCollapsed);
 
     if (isPanelCollapsed) {
         panel.style.width = '30px';
@@ -105,6 +129,7 @@ function init() {
 // Observador de mutaciones para manejar cambios dinámicos en el DOM
 const observer = new MutationObserver((mutations) => {
     if (!document.querySelector('.toggle-button')) {
+        console.log('Toggle button no encontrado, reinicializando...');
         init();
     }
 });
