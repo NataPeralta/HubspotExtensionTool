@@ -24,11 +24,13 @@
 }
 
 /* Estilos para el panel cuando está colapsado */
-.custom-widget-editor-sidebar.main-sidebar {
+.custom-widget-editor-sidebar.main-sidebar,
+.UIBox__Box-ya7skb-0.private-flex__child.resizable-pane.is--vertical {
     transition: width 0.3s ease;
 }
 
-.custom-widget-editor-sidebar.main-sidebar.collapsed {
+.custom-widget-editor-sidebar.main-sidebar.collapsed,
+.UIBox__Box-ya7skb-0.private-flex__child.resizable-pane.is--vertical.collapsed {
     overflow: hidden;
 }
 

@@ -1,26 +1,21 @@
 // Estado global para el toggle
 let isPanelCollapsed = false;
+let isInitialized = false;
 
 // Función para encontrar el panel objetivo
 function findTargetPanel() {
     console.log('Buscando panel objetivo...');
-    // Primero intentamos con el selector específico de HubSpot
-    let panel = document.querySelector('.custom-widget-editor-sidebar.main-sidebar');
+    // Usando el selector específico proporcionado
+    let panel = document.querySelector('.UIBox__Box-ya7skb-0.private-flex__child.resizable-pane.is--vertical');
     if (panel) {
         console.log('Panel encontrado con selector principal');
         return panel;
     }
 
-    // Si no funciona, intentamos con los selectores alternativos
-    panel = document.querySelector('.resizable-pane.is--vertical');
+    // Selector alternativo por si cambian las clases dinámicas
+    panel = document.querySelector('[class*="UIBox__Box"][class*="private-flex__child"][class*="resizable-pane"][class*="is--vertical"]');
     if (panel) {
-        console.log('Panel encontrado con selector alternativo 1');
-        return panel;
-    }
-
-    panel = document.querySelector('[class*="resizable-pane"][class*="is--vertical"]');
-    if (panel) {
-        console.log('Panel encontrado con selector alternativo 2');
+        console.log('Panel encontrado con selector alternativo');
         return panel;
     }
 
@@ -93,9 +88,13 @@ function togglePanel() {
     chrome.storage.local.set({ isPanelCollapsed });
 }
 
-
 // Función principal de inicialización
 function init() {
+    if (isInitialized) {
+        console.log('Ya está inicializado');
+        return;
+    }
+
     console.log('Inicializando extensión HubSpot Layout Manager');
 
     // Recuperar el estado guardado
@@ -109,9 +108,14 @@ function init() {
             return;
         }
 
+        // Verificar si ya existe un botón
+        if (buttonContainer.querySelector('.toggle-button')) {
+            console.log('El botón ya existe');
+            return;
+        }
+
         const toggleButton = createToggleButton();
         buttonContainer.appendChild(toggleButton);
-
         toggleButton.addEventListener('click', togglePanel);
 
         // Aplicar el estado inicial si está colapsado
@@ -123,12 +127,17 @@ function init() {
                 panel.classList.add('collapsed');
             }
         }
+
+        isInitialized = true;
     });
 }
 
 // Observador de mutaciones para manejar cambios dinámicos en el DOM
 const observer = new MutationObserver((mutations) => {
-    if (!document.querySelector('.toggle-button')) {
+    const buttonExists = document.querySelector('.toggle-button');
+    const containerExists = findButtonContainer();
+
+    if (!buttonExists && containerExists && !isInitialized) {
         console.log('Toggle button no encontrado, reinicializando...');
         init();
     }
