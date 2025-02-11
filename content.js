@@ -1,9 +1,3 @@
-// State for the toggle
-let isPanelCollapsed = false;
-let isInitialized = false;
-let originalWidth = null;
-let originalMinWidth = null;
-
 // Function to determine which page we are viewing
 function getCurrentPage() {
     const url = window.location.href;
@@ -24,7 +18,6 @@ function initializePage() {
         window.designPreviewer.init();
     }
 }
-
 
 // Observador de mutaciones para manejar cambios dinámicos en el DOM
 const observer = new MutationObserver(() => {
