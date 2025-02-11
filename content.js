@@ -33,13 +33,13 @@ function initializePage() {
     });
 }
 
+// Inicializar cuando se detecten cambios en el DOM
 const observer = new MutationObserver((mutations) => {
     console.log('[Content Script] Cambios en el DOM detectados, verificando cambios relevantes...');
     const hasRelevantChanges = mutations.some(mutation => {
         return Array.from(mutation.addedNodes).some(node => {
             return node.classList && 
-                   (node.classList.contains('CodeMirror') || 
-                    node.classList.contains('code-pane-editor'));
+                   (node.classList.contains('code-pane-editor'));
         });
     });
 
