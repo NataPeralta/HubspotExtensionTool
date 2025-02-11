@@ -6,6 +6,10 @@
     padding: 8px;
     border-radius: 4px;
     transition: background-color 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 8px;
 }
 
 .toggle-button:hover {
@@ -16,17 +20,10 @@
     display: inline-block;
     font-size: 16px;
     transition: transform 0.3s ease;
+    color: #33475b;
 }
 
 /* Estilos para el panel cuando está colapsado */
-.resizable-pane.is--vertical {
-    transition: width 0.3s ease;
-}
-
-.resizable-pane.is--vertical.collapsed {
-    overflow: hidden;
-}
-
 .custom-widget-editor-sidebar.main-sidebar {
     transition: width 0.3s ease;
 }

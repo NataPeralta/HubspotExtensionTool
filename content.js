@@ -19,12 +19,17 @@ function findTargetPanel() {
 
 // Función para encontrar el contenedor del botón
 function findButtonContainer() {
-    // Primero intentamos con el selector simplificado
-    let container = document.querySelector(".editor-container .private-flex__child > div");
+    // Primero intentamos con el selector específico de HubSpot
+    let container = document.querySelector('.dm-tool__breadcrumbs.field-edit-breadcrumbs');
 
     // Si no funciona, intentamos con el selector más específico
     if (!container) {
-        container = document.querySelector('[class*="editor-container"] [class*="private-flex__child"] > div');
+        container = document.querySelector('[class*="ToolBreadcrumbs__StyledFlexContainer"]');
+    }
+
+    // Último intento con el selector más genérico
+    if (!container) {
+        container = document.querySelector('[class*="dm-tool__breadcrumbs"]');
     }
 
     return container;
