@@ -4,9 +4,6 @@ let isInitialized = false;
 let originalWidth = null;
 let originalMinWidth = null;
 
-import { init as initDesignManager } from './pages/design-manager.js';
-import { init as initDesignPreviewer } from './pages/design-previewer.js';
-
 // Function to determine which page we are viewing
 function getCurrentPage() {
     const url = window.location.href;
@@ -22,9 +19,9 @@ function getCurrentPage() {
 function initializePage() {
     const currentPage = getCurrentPage();
     if (currentPage === 'design-manager') {
-        initDesignManager();
+        window.designManager.init();
     } else if (currentPage === 'design-previewer') {
-        initDesignPreviewer();
+        window.designPreviewer.init();
     }
 }
 

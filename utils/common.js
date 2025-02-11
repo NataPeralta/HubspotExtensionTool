@@ -10,15 +10,22 @@ function createToggleButton() {
 }
 
 function initializeToggleState() {
+    console.log('Inicializando estado del toggle');
     return new Promise((resolve) => {
         chrome.storage.local.get(['isPanelCollapsed'], (result) => {
+            console.log('Estado recuperado:', result.isPanelCollapsed);
             resolve(result.isPanelCollapsed || false);
         });
     });
 }
 
 function saveToggleState(isPanelCollapsed) {
+    console.log('Guardando estado del toggle:', isPanelCollapsed);
     chrome.storage.local.set({ isPanelCollapsed });
 }
 
-export { createToggleButton, initializeToggleState, saveToggleState };
+window.utils = {
+    createToggleButton,
+    initializeToggleState,
+    saveToggleState
+};

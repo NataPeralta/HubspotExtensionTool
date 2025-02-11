@@ -22,8 +22,12 @@
         "https://app.hubspot.com/design-previewer/*"
       ],
       "css": ["styles.css"],
-      "js": ["content.js"],
-      "type": "module"
+      "js": [
+        "utils/common.js",
+        "pages/design-manager.js",
+        "pages/design-previewer.js",
+        "content.js"
+      ]
     }
   ],
   "background": {
