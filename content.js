@@ -1,4 +1,4 @@
-function waitForElement(selector, callback, maxAttempts = 20) {
+function waitForElement(selector, callback, maxAttempts = 50) {  
     let attempts = 0;
 
     const checkElement = () => {
@@ -11,7 +11,7 @@ function waitForElement(selector, callback, maxAttempts = 20) {
             callback(element);
         } else if (attempts < maxAttempts) {
             console.log(`[Content Script] Elemento ${selector} no encontrado, reintentando...`);
-            setTimeout(checkElement, 500);
+            setTimeout(checkElement, 100); 
         } else {
             console.log(`[Content Script] Máximo de intentos alcanzado para ${selector}`);
         }

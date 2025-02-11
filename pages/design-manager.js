@@ -4,6 +4,31 @@ window.designManager = (function() {
         editor: null
     };
 
+    function waitForCodeMirrorInstance(element, maxAttempts = 50) {
+        return new Promise((resolve, reject) => {
+            let attempts = 0;
+            const checkInstance = () => {
+                attempts++;
+                console.log('[Design Manager] Intentando acceder a la instancia de CodeMirror:', {
+                    attempt: attempts,
+                    hasInstance: !!element.CodeMirror,
+                    elementProperties: Object.keys(element)
+                });
+
+                if (element.CodeMirror) {
+                    console.log('[Design Manager] Instancia de CodeMirror encontrada después de', attempts, 'intentos');
+                    resolve(element.CodeMirror);
+                } else if (attempts < maxAttempts) {
+                    setTimeout(checkInstance, 100);
+                } else {
+                    console.log('[Design Manager] No se pudo encontrar la instancia de CodeMirror después de', maxAttempts, 'intentos');
+                    reject(new Error('CodeMirror instance not found'));
+                }
+            };
+            checkInstance();
+        });
+    }
+
     function findAndSetupEditor() {
         console.log('[Design Manager] Buscando editor...');
 
@@ -35,25 +60,26 @@ window.designManager = (function() {
             hasCodeMirror: !!editorElement?.CodeMirror
         });
 
-        if (!editorElement?.CodeMirror) {
-            console.log('[Design Manager] Instancia de CodeMirror no encontrada');
-            // Listar todas las instancias de CodeMirror para debugging
-            const allCodeMirrors = document.querySelectorAll('.CodeMirror');
-            console.log('[Design Manager] Todas las instancias de CodeMirror:', Array.from(allCodeMirrors).map(el => ({
-                className: el.className,
-                hasInstance: !!el.CodeMirror
-            })));
+        if (!editorElement) {
+            console.log('[Design Manager] Elemento CodeMirror no encontrado');
             return;
         }
 
-        if (!state.editor) {
-            console.log('[Design Manager] Nueva instancia de editor encontrada, configurando...');
-            state.editor = editorElement.CodeMirror;
-            console.log('[Design Manager] Editor configurado exitosamente', {
-                mode: state.editor.getOption('mode'),
-                theme: state.editor.getOption('theme'),
-                lineNumbers: state.editor.getOption('lineNumbers')
-            });
+        // Si encontramos el elemento pero no tiene la instancia, esperamos
+        if (!state.editor && editorElement) {
+            console.log('[Design Manager] Esperando a que la instancia de CodeMirror se inicialice...');
+            waitForCodeMirrorInstance(editorElement)
+                .then(cmInstance => {
+                    console.log('[Design Manager] Nueva instancia de editor encontrada, configurando...', {
+                        mode: cmInstance.getOption('mode'),
+                        theme: cmInstance.getOption('theme'),
+                        lineNumbers: cmInstance.getOption('lineNumbers')
+                    });
+                    state.editor = cmInstance;
+                })
+                .catch(error => {
+                    console.error('[Design Manager] Error al esperar la instancia:', error);
+                });
         }
     }
 
